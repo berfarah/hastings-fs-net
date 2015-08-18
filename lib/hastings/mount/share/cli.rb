@@ -1,60 +1,41 @@
 require "hastings/core/shell"
+require_relative "cli/arguments"
 
 module Hastings
   module Mount
     # Command Line Interface for Mounts
     class Cli
-      # Interpret data as arguments
-      class Arguments
-        def initialize(obj)
-          @obj = obj
-        end
-
-        def type
-          @obj.type && "-t #{@obj.type}"
-        end
-
-        def opts
-          [auth, read_write_mode].compact.map { |e| "-o #{e}" }.join(" ")
-        end
-
-        private
-
-          def read_write_mode
-            @obj.read_only ? :ro : :rw
-          end
-
-          def auth
-            return unless @obj.username && @obj.password
-            "username='#{escape(@obj.username)}',"\
-            "password='#{escape(@obj.password)}'".freeze
-          end
-
-          def escape(str)
-            str.gsub(/'/, %(\'))
-          end
-      end # Arguments
-
       def initialize(settings)
         @args = Arguments.new(settings)
       end
 
+      # @param path [String] share path
+      # @param mounted_on [String] (optional) local path
+      # @return [Boolean]
       def mounted?(path, mounted_on = nil)
         true & _mount("| grep '#{path}' | grep '#{mounted_on}'")
       rescue; false
       end
 
+      # @param path [String] share path
+      # @param mounted_on [String] local path
+      # @return [String] STDOUT if success
+      # @raise [Hastings::Shell::Error] if failure
       def mount(path, mounted_on)
         mkdir_p(mounted_on)
         _mount([@args.opts, path, mounted_on].join(" "))
       end
 
+      # @param path [String] share path
+      # @return [String] STDOUT if success
+      # @raise [Hastings::Shell::Error] if failure
       def unmount(path)
         _umount(path)
       end
 
       private
 
+        # Proxy for [Hastings::Shell#run]
         def run(*args)
           Shell.run(*args)
         end

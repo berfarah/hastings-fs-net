@@ -4,7 +4,6 @@ describe Hastings::Mount::ProxyDir do
   let(:share) { Hastings::Mount::Share.new path, OpenStruct.new }
 
   before do
-    allow(Hastings).to receive(:pwd).and_return("some_dir")
     FileUtils.mkdir_p share.local_full_path
   end
 
@@ -13,7 +12,7 @@ describe Hastings::Mount::ProxyDir do
   describe "#path" do
     it "is the share's local path" do
       expect(subject.path).to eq(
-        File.absolute_path("some_dir/share/my/example/dir/goes/here"))
+        File.join(Hastings.root, *%w(share my example dir goes here)))
     end
   end
 

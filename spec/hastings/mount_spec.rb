@@ -1,9 +1,7 @@
 describe Hastings::Mount do
-  before do
-    allow(Hastings).to receive(:pwd).and_return("some_dir")
-  end
+  before { allow(Hastings).to receive(:pwd).and_return("some_dir") }
 
-  describe ".valid?" do
+  describe ".mount?" do
     it "recognizes smb:// as valid" do
       expect(described_class.mount? "smb://example/dir").to be Hastings::Mount::Samba
     end
@@ -13,7 +11,7 @@ describe Hastings::Mount do
     end
 
     it "doesn't recognize non-prefixed dirs as valid" do
-      expect(described_class.mount? "example/dir").to be false
+      expect { described_class.mount? "example/dir" }.to raise_error(NotImplementedError)
     end
   end
 
@@ -22,15 +20,8 @@ describe Hastings::Mount do
     it { is_expected.to be_a Hastings::Mount::Registry }
   end
 
-  describe ".settings" do
-    subject { super().settings }
-    it { is_expected.to respond_to :username }
-    it { is_expected.to respond_to :password }
-    it { is_expected.to respond_to :read_only }
-  end
-
   describe ".mount!" do
-    subject { super().mount!("//share/my/example", subject.settings) }
+    subject { super().mount!("//share/my/example") }
     before do
       expect_any_instance_of(Hastings::Mount::Cifs).to receive(:mounted?)
       expect_any_instance_of(Hastings::Mount::Cifs).to receive(:mount!).and_return(true)
@@ -41,7 +32,7 @@ describe Hastings::Mount do
   end
 
   describe ".unmount!" do
-    subject { super().unmount!("//some_path", subject.settings) }
+    subject { super().unmount!("//some_path") }
 
     it "removes the mount from the registry" do
       expect_any_instance_of(Hastings::Mount::Registry).to receive(:remove)
