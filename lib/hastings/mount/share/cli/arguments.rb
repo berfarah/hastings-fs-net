@@ -1,6 +1,6 @@
 module Hastings
   module Mount
-    module Cli
+    class Cli
       # Interpret data as arguments
       class Arguments
         def initialize(obj)
