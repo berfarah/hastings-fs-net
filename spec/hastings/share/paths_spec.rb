@@ -1,6 +1,6 @@
-describe Hastings::Mount::Paths do
+describe Hastings::FS::Net::Paths do
   subject do
-    Struct.new(:path) { include Hastings::Mount::Paths }.new path
+    Struct.new(:path) { include Hastings::FS::Net::Paths }.new path
   end
   let(:path) { "//share_name/long/path/goes/here" }
 

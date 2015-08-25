@@ -4,7 +4,7 @@ require "simplecov"
 require "fileutils"
 
 SimpleCov.start { add_filter "_spec" }
-require "hastings/mount"
+require "hastings/fs/net"
 
 RSpec.configure do |config|
   config.before(:suite) do

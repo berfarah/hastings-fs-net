@@ -1,11 +1,8 @@
-describe Hastings::Mount::ProxyDir do
+describe Hastings::FS::Net::ProxyDir do
   subject { described_class.new share }
   let(:path) { "//share/my/example/dir/goes/here" }
-  let(:share) { Hastings::Mount::Share.new path, OpenStruct.new }
-
-  before do
-    FileUtils.mkdir_p share.local_full_path
-  end
+  let(:share) { Hastings::FS::Net::Share.new path, {} }
+  before { FileUtils.mkdir_p share.local_full_path }
 
   it { is_expected.to be_a Hastings::Dir }
 

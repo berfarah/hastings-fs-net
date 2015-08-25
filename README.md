@@ -22,7 +22,28 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Because mounting shares often requires root permissions, shares need to be declared up-front so that
+a separate script can then mount them. In the `Hastings` docker container, this is done for you
+automatically.
+
+Mounted directories act just like normal directories, but are proxied via the Hastings mount path.
+
+```ruby
+Hastings::Script.new do
+  name "Script name"
+  run_every 5.days
+  share "//my_share/dir"
+  share "//my_share/other_dir"
+
+  run do
+    var.dir = dir "//my_share/dir/something/here"
+    var.other_dir = dir "//my_share/other_dir/something/here"
+    loop(var.dir.files) do |file|
+      file.copy var.other_dir
+    end
+  end
+end
+```
 
 ## Development
 

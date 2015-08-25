@@ -1,15 +1,11 @@
-describe Hastings::Mount::Registry do
-  subject { Hastings::Mount::Registry.new }
+describe Hastings::FS::Net::Registry do
+  subject { Hastings::FS::Net::Registry.new }
 
   before do
     allow(Hastings).to receive(:pwd).and_return("my_local_dir")
 
-    @share = Hastings::Mount::Share.new "//some_path/here", OpenStruct.new
+    @share = Hastings::FS::Net::Share.new "//some_path/here", {}
     allow(@share).to receive(:mounted?)
-    allow(@share).to receive(:mount!)
-    allow(@share).to receive(:mount)
-    allow(@share).to receive(:unmount!)
-    allow(@share).to receive(:unmount)
   end
 
   it "should instantiate with empty shares" do
@@ -21,21 +17,6 @@ describe Hastings::Mount::Registry do
       it "adds it" do
         subject.add(@share)
         expect(subject.shares).to include(@share)
-      end
-
-      context "if it isn't mounted" do
-        it "mounts it" do
-          expect(@share).to receive(:mount!)
-          subject.add(@share)
-        end
-      end
-
-      context "if it is mounted" do
-        it "adds and mounts it" do
-          expect(@share).to receive(:mounted?).and_return(true)
-          expect(@share).not_to receive(:mount!)
-          subject.add(@share)
-        end
       end
     end
 
@@ -70,25 +51,8 @@ describe Hastings::Mount::Registry do
     it "unmounts and deletes the share" do
       subject.add(@share)
       expect(subject.shares).to include(@share)
-      expect(@share).to receive(:unmount!)
       subject.remove(@share)
       expect(subject.shares).to be_empty
-    end
-  end
-
-  context "#mount" do
-    it "calls #mount on the shares" do
-      subject.add(@share)
-      expect(@share).to receive(:mount)
-      subject.mount
-    end
-  end
-
-  context "#unmount" do
-    it "calls #unmount on the shares" do
-      subject.add(@share)
-      expect(@share).to receive(:unmount)
-      subject.unmount
     end
   end
 end

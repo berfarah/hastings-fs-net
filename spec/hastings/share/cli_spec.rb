@@ -1,6 +1,7 @@
+require "hastings/fs/net/cli"
 require "ostruct"
 
-describe Hastings::Mount::Cli::Arguments do
+describe Hastings::FS::Net::Cli::Arguments do
   subject { described_class.new struct }
 
   describe "#type" do
@@ -65,7 +66,7 @@ describe Hastings::Mount::Cli::Arguments do
   end
 end
 
-describe Hastings::Mount::Cli do
+describe Hastings::FS::Net::Cli do
   subject { described_class.new OpenStruct.new }
 
   describe "#mounted?" do
