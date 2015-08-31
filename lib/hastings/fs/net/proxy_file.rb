@@ -1,4 +1,4 @@
-require "hastings/file"
+require "hastings/fs/file"
 
 module Hastings
   module FS

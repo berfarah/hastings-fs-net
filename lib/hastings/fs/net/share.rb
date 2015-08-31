@@ -4,10 +4,27 @@ require_relative "share/paths"
 module Hastings
   module FS
     module Net
-      # Invalid mount
-      class Invalid < StandardError; end
-
-      # Inheritable shares class
+      # Share is an inheritable class for Network Shares
+      #
+      # == Usage:
+      #   class FTP < Share
+      #     prefix :ftp
+      #
+      #     # required if using the mount utility
+      #     # type   :fsftp
+      #
+      #     # Otherwise override mount command:
+      #     def command
+      #       "curlftpfs #{base_path} #{local_base_path} #{auth_opts}"
+      #     end
+      #
+      #     # Auth options default to "-o username='foo',password='bar'"
+      #     def auth_opts
+      #       return "" unless username || password
+      #       "-o " + { username: username, password: password }
+      #         .map { |k, v| "#{k}='#{v}'" }.join(",")
+      #     end
+      #   end
       class Share
         class << self; attr_accessor :prefix, :type; end
 
@@ -55,6 +72,16 @@ module Hastings
           %r{^(#{prefix || ".+?"}:)?//} =~ path
         end
 
+        def command
+          "mount -t #{type} #{base_path} #{local_base_path} #{auth_opts}"
+        end
+
+        def auth_opts
+          return "" unless username || password
+          "-o " + { username: username, password: password }
+            .map { |k, v| "#{k}='#{v}'" }.join(",")
+        end
+
         private
 
           # Validate it's a valid path and strip the prefix
@@ -63,7 +90,7 @@ module Hastings
           # @raise [Invalid]
           def validate!(path)
             self.class.valid?(path) && strip_prefix(path) ||
-              fail(Invalid, [self.class.name[/[^:]+$/], path].join(": "))
+              fail(InvalidError, [self.class.name[/[^:]+$/], path].join(": "))
           end
 
           # Strip the share prefix

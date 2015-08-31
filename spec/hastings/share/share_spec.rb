@@ -20,7 +20,7 @@ describe Hastings::FS::Net::Share do
     context "given an invalid share path" do
       let(:path) { super()[2..-1] }
       it "fails with an Invalid error" do
-        expect { subject }.to raise_error(Hastings::FS::Net::Invalid)
+        expect { subject }.to raise_error(Hastings::FS::Net::InvalidError)
       end
     end
   end
@@ -31,6 +31,60 @@ describe Hastings::FS::Net::Share do
       wrong = described_class.new "//something/else/entirely"
       expect(subject == other).to be true
       expect(subject == wrong).to be false
+    end
+  end
+
+  context "when inherited" do
+    before { class Foo < described_class; end }
+    subject do
+      Foo.prefix = prefix
+      Foo.type = type
+      Foo
+    end
+    let(:prefix) { :smb }
+    let(:type) { :cifs }
+
+    describe ".valid?" do
+      it "is false for a different prefix" do
+        expect(subject.valid? "asdf://my-share/foo").to be_falsey
+      end
+
+      it "is true for no prefix" do
+        expect(subject.valid? "//my-share/foo").to be_truthy
+      end
+
+      it "is true for the correct prefix" do
+        expect(subject.valid? "smb://my-share/foo").to be_truthy
+      end
+    end
+
+    context "Instance Methods:" do
+      # Instance methods
+      subject { super().new "smb://my-share/foo/bar", **args }
+      let(:args) { { username: "foo", password: "bar" } }
+
+      describe "#type" do
+        subject { super().type }
+        it { is_expected.to eq type }
+      end
+
+      describe "#prefix" do
+        subject { super().prefix }
+        it { is_expected.to eq prefix }
+      end
+
+      describe "#command" do
+        subject { super().command }
+        it do
+          is_expected.to eq "mount -t cifs //my-share/foo "\
+          "/var/tmp/hastings/my-share/foo -o username='foo',password='bar'"
+        end
+      end
+
+      describe "#auth_opts" do
+        subject { super().auth_opts }
+        it { is_expected.to eq "-o username='foo',password='bar'" }
+      end
     end
   end
 end

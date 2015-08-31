@@ -1,20 +1,31 @@
 require "hastings/core"
-require_relative "net/registry"
-require_relative "net/proxy_dir"
-Dir[File.expand_path("../net/types/*", __FILE__)].each(&method(:require))
+require "hastings/fs"
+
+require "hastings/fs/net/errors"
+require "hastings/dsl/fs/net"
 
 module Hastings
   module FS
-    # Handles our mount operations and namespaces this gem
-    module Net
-      def self.new(path, **settings)
-        share?(path).new(path, **settings)
-      end
-
-      def self.share?(path)
-        Share.descendants.find { |s| s.valid?(path) && s } ||
-          fail(NotImplementedError)
-      end
-    end
+    # {Hastings::FS::Net} contains methods pertaining to network shares
+    #
+    # Network files and drives are proxied to their mounted counterparts. It is
+    # required to declare network shares ahead of time. This is an extension of
+    # {Hastings::FS}.
+    #
+    # Implemented share types are:
+    # * Samba
+    # * Cifs
+    #
+    # == Example usage:
+    #   Hastings.script do
+    #     name "Networking script"
+    #     description "My project's description"
+    #     run_at "5AM"
+    #
+    #     network_drive "//mynetworkshare/foo/bar",
+    #       username: "foo", password: "bar"
+    #     network-drive "//othershare/bazinga"
+    #   end
+    module Net; end
   end
 end

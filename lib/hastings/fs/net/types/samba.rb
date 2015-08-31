@@ -4,7 +4,7 @@ module Hastings
   module FS
     module Net
       # Samba shares
-      class Samba < Share
+      class Samba < Cifs
         self.prefix = :smb
         self.type   = :cifs
       end
