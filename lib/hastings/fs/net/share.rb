@@ -72,10 +72,17 @@ module Hastings
           %r{^(#{prefix || ".+?"}:)?//} =~ path
         end
 
+        # The command we will use to mount this drive. We default to the mount
+        # utility.
+        #
+        # @return [String] Useful for command line access to Hastings Meta
         def command
           "mount -t #{type} #{base_path} #{local_base_path} #{auth_opts}"
         end
 
+        # Default auth options: the mount utility uses an -o flag with options
+        #
+        # @return [String] Required for mount utility
         def auth_opts
           return "" unless username || password
           "-o " + { username: username, password: password }

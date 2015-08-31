@@ -2,31 +2,31 @@ require "hastings/fs/net/registry"
 
 module Hastings
   class Dsl
-    # These integrations in the meta require you to declare your network
-    # shares up-front so they can be mounted by a separate script.
-    #
-    # == Example use:
-    #   Hastings.script do
-    #     name "Script name"
-    #     run_every 5.days
-    #     network_share "//my_share/dir"
-    #     network_share "//my_share/other_dir",
-    #       username: "myuser", password: "12345"
-    #
-    #     run do
-    #       var.dir = dir "//my_share/dir/something/here"
-    #       var.other_dir = dir "//my_share/other_dir/something/here"
-    #
-    #       loop(var.dir.files) do |file|
-    #         file.copy var.other_dir
-    #       end
-    #     end
-    #   end
-    #
-    # Via the command line this would be accessible like this:
-    #   hastings list network_share_commands
     module FS
       module Net
+        # These integrations in the meta require you to declare your network
+        # shares up-front so they can be mounted by a separate script.
+        #
+        # == Example use:
+        #   Hastings.script do
+        #     name "Script name"
+        #     run_every 5.days
+        #     network_share "//my_share/dir"
+        #     network_share "//my_share/other_dir",
+        #       username: "myuser", password: "12345"
+        #
+        #     run do
+        #       var.dir = dir "//my_share/dir/something/here"
+        #       var.other_dir = dir "//my_share/other_dir/something/here"
+        #
+        #       loop(var.dir.files) do |file|
+        #         file.copy var.other_dir
+        #       end
+        #     end
+        #   end
+        #
+        # Via the command line this would be accessible like this:
+        #   hastings list network_share_commands
         module Meta
           # @return [Registry] Network Share Registry
           def network_shares
@@ -57,8 +57,6 @@ module Hastings
       end
     end
 
-    class Meta
-      include Hastings::Dsl::FS::Net::Meta
-    end
+    class Meta; include Hastings::Dsl::FS::Net::Meta; end
   end
 end

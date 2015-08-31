@@ -1,7 +1,7 @@
 # coding: utf-8
 Gem::Specification.new do |spec|
   spec.name          = "hastings-fs-net"
-  spec.version       = "0.3.0"
+  spec.version       = "0.3.1"
   spec.authors       = ["Bernardo Farah"]
   spec.email         = ["ber@bernardo.me"]
 
