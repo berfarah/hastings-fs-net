@@ -28,8 +28,8 @@ Mounted directories act just like normal directories, but are proxied via the Ha
 Hastings::Script.new do
   name "Script name"
   run_every 5.days
-  share "//my_share/dir"
-  share "//my_share/other_dir"
+  network_share "//my_share/dir"
+  network_share "//my_share/other_dir"
 
   run do
     var.dir = dir "//my_share/dir/something/here"
@@ -50,4 +50,3 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/berfarah/hastings-mount.
-
